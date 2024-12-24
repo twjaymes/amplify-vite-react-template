@@ -1,0 +1,66 @@
+type Project @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  projectName: String
+  Tasks: [Task] @hasMany(indexName: "byProject", fields: ["id"])
+}
+
+type Objective @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  objectiveNme: String
+  goals: [Goal] @manyToMany(relationName: "GoalObjective")
+}
+
+type Goal @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  goalName: String
+  Domains: [Domain] @manyToMany(relationName: "GoalDomain")
+  Objectives: [Objective] @manyToMany(relationName: "GoalObjective")
+}
+
+type Domain @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  domainName: String
+  domainDescription: String
+  subDomain: String
+  goals: [Goal] @manyToMany(relationName: "GoalDomain")
+}
+
+type Task @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  taskName: String
+  taskDescription: String
+  taskType: String
+  taskStatus: String
+  taskNotes: String
+  clientID: ID! @index(name: "byClient")
+  projectID: ID! @index(name: "byProject")
+}
+
+type Client @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  clientName: String
+  clientEmail: String
+  clientPassword: String
+  Tasks: [Task] @hasMany(indexName: "byClient", fields: ["id"])
+}
+
+type Collection @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  collectionName: String
+  collectionDescription: String
+  colletionType: String
+  collectionStatus: String
+  collectionNotes: String
+  Items: [Item] @hasMany(indexName: "byCollection", fields: ["id"])
+}
+
+type Item @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  itemName: String!
+  itemDescription: String
+  itemType: String
+  itemStatus: String
+  itemNotes: String
+  itemPrice: Float
+  collectionID: ID! @index(name: "byCollection")
+}
